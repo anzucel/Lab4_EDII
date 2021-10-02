@@ -1,4 +1,5 @@
 ﻿using System;
+using ListaDobleEnlace;
 
 namespace Cifrado
 {
@@ -8,12 +9,11 @@ namespace Cifrado
         private char[] abc = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
         private char[] ABCaux;
         private char[] abcaux;
+        
 
         //constructor
         public Cifrado()
         {
-            //char[] ABC = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-            //char[] abc = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
             abcaux = new char[27];
             ABCaux = new char[27];
         }
@@ -74,7 +74,21 @@ namespace Cifrado
         public string Cesar(string texto, string clave)
         {
             string txt_cifrado = "";
-            ArmarABC(clave);
+            string claveaux = clave[0].ToString();
+            bool insertar = true; ;
+
+            for (int i = 0; i < clave.Length; i++)
+            {
+                insertar = true; ;
+                for (int j = 0; j < claveaux.Length; j++)
+                {
+                    if(clave[i] == claveaux[j]) { insertar = false; ; }
+                }
+                if (insertar)
+                    claveaux += clave[i];
+            }
+
+            ArmarABC(claveaux);
             bool cambiar = false;
 
             for (int i = 0; i < texto.Length; i++)
@@ -115,7 +129,72 @@ namespace Cifrado
 
         public string Zigzag(string texto, int clave)
         {
-            throw new NotImplementedException();
+            ListaDoble<string> caracteres = new ListaDoble<string>();
+            decimal cant_olas = texto.Length / clave;
+            cant_olas = Math.Floor(cant_olas);
+            int claves_ola = (clave * 2) - 2;
+            int valTotales = Convert.ToInt32(cant_olas) * claves_ola;
+            string txt_cifrado = "";
+            
+            int inicio = 0, fin = claves_ola;
+            while (texto.Length > 0)
+            {
+                if (texto.Length < fin)
+                {
+                    int extra = fin - texto.Length;
+                    for (int i = 0; i < extra; i++)
+                    {
+                        texto += "$";
+                    }
+                    caracteres.InsertarFinal(texto.Substring(inicio, fin));
+                    texto = texto.Remove(inicio, fin);
+                }
+                else
+                {
+                    caracteres.InsertarFinal(texto.Substring(inicio, fin));
+                    texto = texto.Remove(inicio, fin);
+                }
+            }
+
+            for (int i = clave, j = 0; i > 0; i--, j++)
+            {
+                if (i == clave)
+                {
+                    for (int h = 0; h < caracteres.contador; h++)
+                    {
+                        string aux = caracteres.ObtenerValor(h);
+                        txt_cifrado += aux[0];
+                    }
+                }
+                if (i == 1)
+                {
+                    int posicion = claves_ola / 2;
+                    for (int k = 0; k < caracteres.contador; k++)
+                    {
+                        string aux = caracteres.ObtenerValor(k);
+                        txt_cifrado += aux[posicion];
+                    }
+                }
+                if (i > 1 && i < clave)
+                {
+                    int posicion;
+                    int contador;
+                    for (int l = 0; l < caracteres.contador; l++)
+                    {
+                        contador = 0;
+                        posicion = j;
+                        while (contador < 2)
+                        {
+                            string aux = caracteres.ObtenerValor(l);
+                            txt_cifrado += aux[posicion];
+                            posicion += (i * 2) - 2;
+                            contador++;
+                        }
+                    }
+                }
+            }
+
+            return txt_cifrado;
         }
     }
 }
