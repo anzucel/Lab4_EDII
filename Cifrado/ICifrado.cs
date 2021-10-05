@@ -8,5 +8,7 @@ namespace Cifrado
     {
         string Cesar(string texto, string clave);
         string Zigzag(string texto, int clave);
+        string descompress_Cesar(string clave, string texto);
+        string descompress_zigzag(int clave, string texto);
     }
 }

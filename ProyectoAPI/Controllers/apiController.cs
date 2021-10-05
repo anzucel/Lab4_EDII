@@ -56,6 +56,21 @@ namespace ProyectoAPI.Controllers
             using var archivo = new MemoryStream();
             try
             {
+                file.CopyToAsync(archivo);
+                var coleccion = Encoding.UTF8.GetString(archivo.ToArray()); //texto a cadena 
+                Byte[] texto_bytes = Encoding.UTF8.GetBytes(coleccion);
+                string texto = Encoding.UTF8.GetString(texto_bytes);
+                string txt_descifrado = "";
+                ICifrado cifrado = new Cifrado.Cifrado();
+
+                string name = file.FileName;
+                string[] extension = name.Split(".");
+
+                if (extension[1] == "csr") { txt_descifrado = cifrado.descompress_Cesar(key, texto); }
+                if (extension[1] == "zz") { txt_descifrado = cifrado.descompress_zigzag(Int32.Parse(key), texto); }
+                escribirtxt(txt_descifrado, extension[0]);
+                return Ok();
+
 
             }
             catch (Exception)
@@ -63,7 +78,7 @@ namespace ProyectoAPI.Controllers
                 return StatusCode(500);
             }
 
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
 
             void Escribir(string imprimir, string nombre, string metodo)
@@ -89,6 +104,40 @@ namespace ProyectoAPI.Controllers
             {
                 Console.WriteLine("Executing finally block.");
             }
+        }
+
+        void escribirtxt(string imprimir, string name)
+        {
+           
+            string DireccionNombre = "../Archivos/" + name + ".txt";//Ruta en donde se guardará 
+
+
+
+            Encoding utf8 = Encoding.UTF8;
+            //pasar de string a bytes 
+            Byte[] texto_bytes = utf8.GetBytes(imprimir);
+
+            //pasar de bytes a string
+            string x = Encoding.UTF8.GetString(texto_bytes);
+            try
+            {
+                //Open the File
+                StreamWriter sw = new StreamWriter(DireccionNombre, false, Encoding.UTF8);
+
+                sw.Write(x);
+
+                //close the file
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Executing finally block.");
+            }
+
         }
     }
 }

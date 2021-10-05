@@ -52,11 +52,11 @@ namespace ListaDobleEnlace
             }
             else
             {
-                nuevoNodo.Siguiente = inicio;
-                inicio.Anterior = nuevoNodo;
+                nuevoNodo.Siguiente = inicio.Siguiente;
+                //inicio.Anterior = nuevoNodo;
                 inicio = nuevoNodo;
             }
-            contador++;
+           // contador++;
             return;
         }
 
@@ -87,10 +87,10 @@ namespace ListaDobleEnlace
                         pos++;
                     }
 
-                    auxiliar.Anterior.Siguiente = NodoAdd;
-                    NodoAdd.Siguiente = auxiliar;
+                   // auxiliar.Anterior.Siguiente = NodoAdd;
+                    NodoAdd.Siguiente = auxiliar.Siguiente;
                     NodoAdd.Anterior = auxiliar.Anterior;
-                    auxiliar.Anterior = NodoAdd;
+                    auxiliar = NodoAdd;
 
                     contador++;
                 }
